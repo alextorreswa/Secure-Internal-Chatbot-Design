@@ -194,6 +194,31 @@
             box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.7);
             background: #020617;
         }
+	/* 🔽 Add this block right here */
+	select {
+    	    width: 100%;
+    	    padding: 9px 10px;
+    	    font-size: 13px;
+    	    border-radius: 8px;
+    	    border: 1px solid rgba(148, 163, 184, 0.6);
+    	    background: #020617;          /* dark background */
+    	    color: var(--text-main);      /* light text */
+    	    outline: none;
+    	    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+	}
+
+	select:focus {
+            border-color: var(--primary-light);
+    	    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.7);
+    	    background: #020617;
+	}
+
+	select option[value=""] {
+    	    color: var(--text-muted);     /* grey placeholder */
+	}
+	/* 🔼 End new block */
+
+
 
         .field {
             margin-bottom: 14px;
@@ -298,30 +323,47 @@
             {% endif %}
 
             <form method="post" action="/login">
-                <div class="field">
-                    <label for="username">Username</label>
-                    <input
-                        type="text"
-                        name="username"
-                        id="username"
-                        placeholder="e.g. warehouse.sam"
-                        required
-                    />
-                </div>
+    <div class="field">
+        <label for="username">Username</label>
+        <input
+            type="text"
+            name="username"
+            id="username"
+            placeholder="e.g. warehouse.sam"
+            required
+        />
+    </div>
 
-                <div class="field">
-                    <label for="password">Password</label>
-                    <input
-                        type="password"
-                        name="password"
-                        id="password"
-                        placeholder="Enter your password"
-                        required
-                    />
-                </div>
+    <div class="field">
+        <label for="password">Password</label>
+        <input
+            type="password"
+            name="password"
+            id="password"
+            placeholder="Enter your password"
+            required
+        />
+    </div>
 
-                <button type="submit">Sign in securely</button>
-            </form>
+    <div class="field">
+        <label for="role">Role</label>
+        <select name="role" id="role" required>
+            <option value="">Select Role</option>
+            <option value="supervisor">Supervisor</option>
+            <option value="compliance">Compliance</option>
+            <option value="manager">Manager</option>
+            <option value="ceo">CEO</option>
+        </select>
+    </div>
+
+    <button type="submit">Sign in securely</button>
+</form>
+
+<div class="forgot-password" style="margin-top:10px; font-size:12px; text-align:center;">
+    <a href="/forgot-password" style="color: var(--primary-light); text-decoration:none;">
+        Forgot your password?
+    </a>
+</div>
 
             <div class="demo-accounts">
                 <strong>Demo accounts</strong><br />
@@ -336,5 +378,33 @@
             </div>
         </section>
     </main>
+
+ <!-- 🔽 JavaScript fetch setup -->
+    <script>
+    document.getElementById("loginForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const role = document.getElementById("role").value;
+
+        try {
+            const response = await fetch("/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password, role })
+            });
+
+            if (response.ok) {
+                window.location.href = "/chatbot"; // redirect on success
+            } else {
+                const data = await response.json();
+                document.getElementById("error-message").innerText = data.detail || "Login failed";
+            }
+        } catch (err) {
+            document.getElementById("error-message").innerText = "Server error. Try again.";
+        }
+    });
+    </script>
 </body>
 </html>
