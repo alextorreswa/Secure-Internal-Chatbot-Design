@@ -296,3 +296,39 @@ async def api_chat(
         "role": current_user.role,
         "answer": response_text,
     }
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+    role: str
+
+# Map frontend role values to backend role names
+role_map = {
+    "supervisor": "warehouse_supervisor",
+    "compliance": "compliance_officer",
+    "manager": "warehouse_manager",
+    "ceo": "ceo",
+}
+
+@app.post("/auth/login")
+async def auth_login(request: LoginRequest):
+    user = authenticate_user(fake_users_db, request.username, request.password)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+
+    expected_role = role_map.get(request.role)
+    if expected_role != user.role:
+        raise HTTPException(status_code=401, detail="Invalid role")
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.username, "role": user.role},
+        expires_delta=access_token_expires,
+    )
+
+    return {
+        "message": "Login successful",
+        "role": user.role,
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
