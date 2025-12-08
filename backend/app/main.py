@@ -244,6 +244,16 @@ async def login_post(
             "access_message": access_message,
         },
     )
+@app.get("/forgot-password", response_class=HTMLResponse)
+async def forgot_password(request: Request):
+    """
+    Placeholder page for 'Forgot Password'.
+    Later this can be expanded to handle password reset flow.
+    """
+    return templates.TemplateResponse(
+        "forgot_password.html",
+        {"request": request}
+    )
 
 
 @app.get("/secure-chat", response_class=HTMLResponse)
