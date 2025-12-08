@@ -197,45 +197,6 @@ async def login_page(request: Request):
 async def login_post(
     request: Request,
     username: str = Form(...),
-    password: str = Form(...)
-):
-    """
-    Handle login form submission:
-    - Validate user
-    - Create JWT token
-    - Show token and link to protected chat page
-    """
-
-    user = authenticate_user(fake_users_db, username, password)
-    if not user:
-        return templates.TemplateResponse(
-            "login.html",
-            {"request": request, "error": "Invalid username or password."},
-            status_code=status.HTTP_401_UNAUTHORIZED,
-        )
-
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.username, "role": user.role},
-        expires_delta=access_token_expires,
-    )
-
-    # For simplicity, we show the token on screen and let the user paste it into Swagger
-    # In a real app, this would be sent as an HttpOnly cookie.
-    return templates.TemplateResponse(
-        "chat.html",
-        {
-            "request": request,
-            "user": user,
-            "token": access_token,
-        },
-    )
-
-
-@app.post("/login", response_class=HTMLResponse)
-async def login_post(
-    request: Request,
-    username: str = Form(...),
     password: str = Form(...),
     role: str = Form(...)
 ):
@@ -284,6 +245,7 @@ async def login_post(
         },
     )
 
+
 @app.get("/secure-chat", response_class=HTMLResponse)
 async def secure_chat_page(
     request: Request,
@@ -292,15 +254,10 @@ async def secure_chat_page(
     """
     Protected page that simulates a secure internal chatbot.
     """
-    # Simple role-based message to show RBAC concept:
     if current_user.role == "compliance_officer":
-        access_message = (
-            "You have access to high-level compliance summaries and audit logs."
-        )
+        access_message = "You have access to high-level compliance summaries and audit logs."
     else:
-        access_message = (
-            "You can log incidents and view checklists for your assigned warehouse."
-        )
+        access_message = "You can log incidents and view checklists for your assigned warehouse."
 
     return templates.TemplateResponse(
         "chat.html",
@@ -323,8 +280,6 @@ async def api_chat(
     For now it just echoes back the query and role.
     Later this will call a local LLM via Ollama.
     """
-    # This simulates calling Mistral / LLaMA 3 in a fully local environment  
-    
     response_text = (
         f"[Prototype reply for {current_user.role}] "
         f'You asked: "{query}". In the final system, this would be answered '
@@ -334,34 +289,4 @@ async def api_chat(
         "user": current_user.username,
         "role": current_user.role,
         "answer": response_text,
-    }
-
-class LoginRequest(BaseModel):
-    username: str
-    password: str
-    role: str
-
-
-
-@app.post("/auth/login")
-async def auth_login(request: LoginRequest):
-    user = authenticate_user(fake_users_db, request.username, request.password)
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid username or password")
-
-    expected_role = role_map.get(request.role)
-    if expected_role != user.role:
-        raise HTTPException(status_code=401, detail="Invalid role")
-
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.username, "role": user.role},
-        expires_delta=access_token_expires,
-    )
-
-    return {
-        "message": "Login successful",
-        "role": user.role,
-        "access_token": access_token,
-        "token_type": "bearer"
     }
