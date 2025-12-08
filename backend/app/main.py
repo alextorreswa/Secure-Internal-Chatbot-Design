@@ -58,6 +58,14 @@ fake_users_db = {
     },
 }
 
+# Map frontend role values to backend role names
+role_map = {
+    "supervisor": "warehouse_supervisor",
+    "compliance": "compliance_officer",
+    "manager": "warehouse_manager",
+    "ceo": "ceo",
+}
+
 # ==============================
 # Pydantic models
 # ==============================
@@ -224,26 +232,57 @@ async def login_post(
     )
 
 
-@app.post("/token", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+@app.post("/login", response_class=HTMLResponse)
+async def login_post(
+    request: Request,
+    username: str = Form(...),
+    password: str = Form(...),
+    role: str = Form(...)
+):
     """
-    OAuth2-compatible login endpoint (used by Swagger "Authorize" button).
+    Handle login form submission:
+    - Validate user credentials
+    - Validate selected role against the user's actual role
+    - Create JWT token
+    - Render the secure chat page
     """
-    
-    user = authenticate_user(fake_users_db, form_data.username, form_data.password)
+    user = authenticate_user(fake_users_db, username, password)
     if not user:
-        raise HTTPException(
+        return templates.TemplateResponse(
+            "login.html",
+            {"request": request, "error": "Invalid username or password."},
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password.",
-            headers={"WWW-Authenticate": "Bearer"},
         )
+
+    expected_role = role_map.get(role)
+    if expected_role != user.role:
+        return templates.TemplateResponse(
+            "login.html",
+            {"request": request, "error": "Invalid role selection."},
+            status_code=status.HTTP_401_UNAUTHORIZED,
+        )
+
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username, "role": user.role},
         expires_delta=access_token_expires,
     )
-    return {"access_token": access_token, "token_type": "bearer"}
 
+    access_message = (
+        "You have access to high-level compliance summaries and audit logs."
+        if user.role == "compliance_officer"
+        else "You can log incidents and view checklists for your assigned warehouse."
+    )
+
+    return templates.TemplateResponse(
+        "chat.html",
+        {
+            "request": request,
+            "user": user,
+            "token": access_token,
+            "access_message": access_message,
+        },
+    )
 
 @app.get("/secure-chat", response_class=HTMLResponse)
 async def secure_chat_page(
@@ -302,13 +341,7 @@ class LoginRequest(BaseModel):
     password: str
     role: str
 
-# Map frontend role values to backend role names
-role_map = {
-    "supervisor": "warehouse_supervisor",
-    "compliance": "compliance_officer",
-    "manager": "warehouse_manager",
-    "ceo": "ceo",
-}
+
 
 @app.post("/auth/login")
 async def auth_login(request: LoginRequest):
