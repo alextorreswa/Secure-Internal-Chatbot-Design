@@ -255,6 +255,17 @@ async def forgot_password(request: Request):
         {"request": request}
     )
 
+@app.post("/forgot-password", response_class=HTMLResponse)
+async def forgot_password_submit(request: Request, email: str = Form(...)):
+    """
+    Handles the form submission from forgot_password.html.
+    For now, just returns the same template with a placeholder message.
+    """
+    message = f"If this were production, a reset link would be sent to {email}."
+    return templates.TemplateResponse(
+        "forgot_password.html",
+        {"request": request, "message": message}
+    )
 
 @app.get("/secure-chat", response_class=HTMLResponse)
 async def secure_chat_page(
