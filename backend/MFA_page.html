@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Multi‑Factor Authentication – Cascade Freight Systems</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: radial-gradient(circle at top left, #1d4ed8 0, #020617 40%);
+      color: #e5e7eb;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      max-width: 800px;
+      background: #111827;
+      border-radius: 12px;
+      padding: 28px;
+      border: 1px solid rgba(148,163,184,0.35);
+      box-shadow: 0 12px 28px rgba(15,23,42,0.8);
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 8px; }
+    p { font-size: 0.95rem; line-height: 1.6; margin-bottom: 12px; color: #cbd5e1; }
+    form { margin-top: 14px; display: grid; gap: 12px; max-width: 420px; }
+    label { font-weight: 600; font-size: 0.95rem; }
+    input[type="text"] {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: #020617;
+      color: #e5e7eb;
+      outline: none;
+      font-size: 1rem;
+    }
+    input[type="text"]:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 1px rgba(59,130,246,0.7);
+    }
+    button[type="submit"] {
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      background: linear-gradient(135deg, #2563eb, #22c55e);
+      color: #eff6ff;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.9);
+    }
+    .row { display: flex; gap: 14px; align-items: center; }
+    .links { margin-top: 10px; font-size: 0.95rem; }
+    .links a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 600;
+      margin-right: 12px;
+    }
+    .links a:hover { text-decoration: underline; }
+    .footer {
+      margin-top: 18px;
+      font-size: 0.9rem;
+      color: #9ca3af;
+    }
+    a.back {
+      display: inline-block;
+      margin-top: 16px;
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    a.back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="card" role="main" aria-labelledby="title">
+    <h1 id="title">Multi‑Factor Authentication</h1>
+    <p>Enter the 6‑digit verification code sent to your registered device to complete sign‑in.</p>
+
+    <!-- Delivery method choice -->
+    <form method="post" action="/mfa-verify" novalidate>
+      <fieldset style="border:none; margin-bottom:14px;">
+        <legend style="font-weight:600; font-size:0.95rem; margin-bottom:6px;">
+          How would you like to receive your verification code?
+        </legend>
+        <label style="display:block; margin-bottom:6px;">
+          <input type="radio" name="delivery_method" value="email" required />
+          Internal Email
+        </label>
+        <label style="display:block; margin-bottom:6px;">
+          <input type="radio" name="delivery_method" value="sms" />
+          Text Message
+        </label>
+        <label style="display:block; margin-bottom:6px;">
+          <input type="radio" name="delivery_method" value="app" />
+          Authenticator App
+        </label>
+      </fieldset>
+
+      <label for="mfa_code">Verification code</label>
+      <input
+        type="text"
+        id="mfa_code"
+        name="mfa_code"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        placeholder="••••••"
+        maxlength="6"
+        required
+      />
+
+      <div class="row">
+        <button type="submit">Verify and continue</button>
+      </div>
+    </form>
+
+    <div class="links">
+      <a href="/mfa-resend">Resend code</a>
+      <a href="/mfa-help">MFA help</a>
+    </div>
+
+    <a href="/login" class="back">← Back to Login</a>
+
+    <div class="footer">
+      Secure access • Role‑based permissions • On‑premise & confidential
+    </div>
+  </div>
+</body>
+</html>
