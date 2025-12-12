@@ -1,285 +1,420 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Cascade Freight Systems – Secure Chatbot</title>
-    <style>
-        :root {
-            --primary: #1e3a8a;
-            --primary-light: #3b82f6;
-            --bg: #020617;
-            --card-bg: #020617;
-            --text-main: #e5e7eb;
-            --text-muted: #9ca3af;
-            --accent: #22c55e;
-            --border-radius: 14px;
-        }
+  <meta charset="UTF-8" />
+  <title>Cascade Freight – Secure Chatbot Prototype</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color-scheme: light dark;
+    }
 
-        * {
-            box-sizing: border-box;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-                sans-serif;
-        }
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0f172a;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background: radial-gradient(circle at top left, #1d4ed8 0, #020617 40%);
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 18px;
-        }
+    .shell {
+      margin: 24px;
+      width: 100%;
+      max-width: 960px;
+      background: #020617;
+      border-radius: 18px;
+      border: 1px solid #1f2937;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.75);
+      overflow: hidden;
+    }
 
-        .shell {
-            max-width: 960px;
-            width: 100%;
-            background: linear-gradient(145deg, #020617e6, #020617f5);
-            border-radius: 28px;
-            border: 1px solid rgba(148, 163, 184, 0.4);
-            padding: 20px 22px 18px;
-            box-shadow:
-                0 18px 40px rgba(15, 23, 42, 0.95),
-                0 0 0 1px rgba(15, 23, 42, 0.7);
-        }
+    .header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #1f2937;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: radial-gradient(circle at top left, #0ea5e9 0, #020617 40%, #020617 100%);
+    }
 
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.3);
-        }
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
 
-        .brand-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+    .brand-name {
+      font-weight: 700;
+      letter-spacing: .06em;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      color: #e5e7eb;
+    }
 
-        .logo-circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 999px;
-            background: radial-gradient(circle at 30% 20%, #60a5fa, #1e3a8a);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 18px;
-            color: white;
-            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.8);
-        }
+    .brand-subtitle {
+      font-size: 0.8rem;
+      color: #cbd5f5;
+    }
 
-        .title-main {
-            font-size: 17px;
-            font-weight: 600;
-        }
+    .user-badge {
+      text-align: right;
+      font-size: 0.8rem;
+      color: #cbd5f5;
+    }
 
-        .title-sub {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
+    .user-badge span {
+      display: block;
+    }
 
-        .user-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 11px;
-            border-radius: 999px;
-            background: rgba(15, 23, 42, 0.9);
-            border: 1px solid rgba(148, 163, 184, 0.7);
-            font-size: 12px;
-        }
+    .user-role {
+      font-weight: 600;
+      text-transform: capitalize;
+    }
 
-        .user-role {
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 999px;
-            background: rgba(37, 99, 235, 0.18);
-            color: #bfdbfe;
-        }
+    .main {
+      display: grid;
+      grid-template-columns: minmax(0, 2.3fr) minmax(0, 1.4fr);
+    }
 
-        .content {
-            display: grid;
-            grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-            gap: 18px;
-            margin-top: 14px;
-        }
+    @media (max-width: 840px) {
+      .main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
 
-        @media (max-width: 900px) {
-            .content {
-                grid-template-columns: 1fr;
-            }
-        }
+    .chat-panel {
+      border-right: 1px solid #111827;
+      display: flex;
+      flex-direction: column;
+      min-height: 420px;
+    }
 
-        .panel {
-            background: radial-gradient(circle at top left, #111827, #020617);
-            border-radius: var(--border-radius);
-            border: 1px solid rgba(148, 163, 184, 0.6);
-            padding: 14px 14px 12px;
-        }
+    .chat-log {
+      flex: 1;
+      padding: 16px 18px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #4b5563 #020617;
+    }
 
-        .panel-title {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
+    .chat-log::-webkit-scrollbar {
+      width: 6px;
+    }
 
-        .panel-sub {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-        }
+    .chat-log::-webkit-scrollbar-thumb {
+      background: #4b5563;
+      border-radius: 999px;
+    }
 
-        .access-message {
-            font-size: 13px;
-            background: rgba(34, 197, 94, 0.08);
-            border-left: 3px solid var(--accent);
-            border-radius: 8px;
-            padding: 8px 10px;
-            margin-bottom: 10px;
-        }
+    .message {
+      max-width: 90%;
+      margin-bottom: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+    }
 
-        .token-box {
-            background: #020617;
-            border-radius: 8px;
-            border: 1px dashed rgba(148, 163, 184, 0.7);
-            padding: 8px 10px;
-            font-size: 11px;
-            max-height: 160px;
-            overflow: auto;
-            word-break: break-all;
-        }
+    .message.user {
+      margin-left: auto;
+      background: #1d4ed8;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
 
-        .token-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
+    .message.bot {
+      margin-right: auto;
+      background: #020617;
+      border: 1px solid #1f2937;
+      border-bottom-left-radius: 4px;
+    }
 
-        .link {
-            color: #93c5fd;
-            text-decoration: none;
-            font-size: 12px;
-        }
+    .message-meta {
+      font-size: 0.7rem;
+      opacity: 0.7;
+      margin-bottom: 2px;
+    }
 
-        .link:hover {
-            text-decoration: underline;
-        }
+    .input-row {
+      padding: 10px 12px;
+      border-top: 1px solid #111827;
+      display: flex;
+      gap: 8px;
+    }
 
-        .hint {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 8px;
-        }
+    .input-row textarea {
+      flex: 1;
+      resize: none;
+      border-radius: 12px;
+      border: 1px solid #1f2937;
+      padding: 8px 10px;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      min-height: 44px;
+      max-height: 120px;
+    }
 
-        .hint code {
-            font-size: 11px;
-            background: rgba(15, 23, 42, 0.8);
-            padding: 2px 5px;
-            border-radius: 6px;
-        }
+    .input-row button {
+      border-radius: 12px;
+      border: none;
+      padding: 0 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: #22c55e;
+      color: #022c22;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 80px;
+    }
 
-        .footer-links {
-            margin-top: 10px;
-            font-size: 11px;
-            color: var(--text-muted);
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+    .input-row button:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
 
-        .footer-links a {
-            color: #9ca3af;
-            text-decoration: none;
-        }
+    .sidebar {
+      padding: 14px 16px 16px;
+      background: radial-gradient(circle at top right, #22c55e 0, #020617 40%, #020617 100%);
+    }
 
-        .footer-links a:hover {
-            color: #e5e7eb;
-        }
-    </style>
+    .sidebar-section {
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #1f2937;
+    }
+
+    .sidebar-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 6px;
+      color: #9ca3af;
+    }
+
+    .sidebar-body {
+      font-size: 0.78rem;
+      color: #e5e7eb;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      margin: 2px 2px 4px 0;
+      cursor: pointer;
+    }
+
+    .pill span {
+      opacity: 0.9;
+    }
+
+    .footer-bar {
+      border-top: 1px solid #111827;
+      padding: 6px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      background: #020617;
+    }
+
+    a.link {
+      color: #38bdf8;
+      text-decoration: none;
+    }
+
+    a.link:hover {
+      text-decoration: underline;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      margin-right: 6px;
+    }
+  </style>
 </head>
 <body>
-    <main class="shell">
-        <header class="header">
-            <div class="brand-left">
-                <div class="logo-circle">CF</div>
-                <div>
-                    <div class="title-main">Cascade Freight Systems</div>
-                    <div class="title-sub">
-                        Secure Internal Compliance Chatbot · Prototype
-                    </div>
-                </div>
-            </div>
+<div class="shell">
+  <header class="header">
+    <div class="brand">
+      <div class="brand-name">CASCADE FREIGHT SYSTEMS</div>
+      <div class="brand-subtitle">Secure In-House Chatbot Prototype</div>
+    </div>
+    <div class="user-badge">
+      <span>{{ full_name }} ({{ username }})</span>
+      <span class="user-role">{{ role }}</span>
+      <span><a class="link" href="/logout">Log out</a></span>
+    </div>
+  </header>
 
-            <div class="user-pill">
-                <span>{{ user.username }}</span>
-                <span class="user-role">{{ user.role }}</span>
-            </div>
-        </header>
-
-        <section class="content">
-            <div class="panel">
-                <div class="panel-title">Secure Chat Access</div>
-                <p class="panel-sub">
-                    You are now authenticated into the internal chatbot workspace.
-                    In the full system, your questions here would be answered by
-                    a locally hosted LLM using Cascade Freight’s compliance policies
-                    and incident reports only.
-                </p>
-
-                {% if access_message %}
-                    <div class="access-message">
-                        {{ access_message }}
-                    </div>
-                {% endif %}
-
-                <p class="hint">
-                    Try the protected endpoint in Swagger:
-                    <code>/api/chat?query=Show last three violations in Tacoma</code>
-                    after authorizing with your token.
-                </p>
-
-                <p class="hint">
-                    Open <a class="link" href="/docs" target="_blank">/docs</a>
-                    and click <strong>Authorize</strong> to use your credentials.
-                </p>
-            </div>
-
-            <div class="panel">
-                <div class="panel-title">Access Token (demo)</div>
-                <p class="panel-sub">
-                    In this prototype, the token is shown so you can copy it into
-                    Swagger for testing. In production, this would be stored in a
-                    secure HttpOnly cookie and never exposed in the UI.
-                </p>
-
-                {% if token %}
-                    <div class="token-label">Current session token</div>
-                    <div class="token-box">
-                        {{ token }}
-                    </div>
-                {% else %}
-                    <p class="hint">
-                        Token is managed via the <code>Authorize</code> button in
-                        Swagger for this session.
-                    </p>
-                {% endif %}
-            </div>
-        </section>
-
-        <div class="footer-links">
-            <div>
-                <a href="/login">&larr; Log in as a different user</a>
-            </div>
-            <div>
-                <span>Prototype environment · Data stays within Cascade Freight Systems</span>
-            </div>
+  <div class="main">
+    <!-- Chat panel -->
+    <section class="chat-panel">
+      <div id="chat-log" class="chat-log">
+        <div class="message bot">
+          <div class="message-meta">CascadeBot • system</div>
+          <div>
+            Welcome, {{ full_name }} 👋 - Your role is <strong>{{ role }}</strong>.  
+            <br/>
+            I can help you demo key features from the Cascade Freight design:
+            <ul style="margin-top: 3px; padding-left: 18px;">
+              <li>Shipment tracking (e.g., <code>Track shipment CFS-1001</code>)</li>
+              <li>Dispatch / driver questions</li>
+              <li>Safety & HR policy questions</li>
+              <li>Contact directory (Dispatch, HR, IT)</li>
+              <li>Compliance checklist guidance (for Compliance & Admin roles)</li>
+            </ul>
+          </div>
         </div>
-    </main>
+      </div>
+
+      <form id="chat-form" class="input-row">
+        <textarea id="message-input" placeholder="Ask something like &quot;Track shipment CFS-1001&quot; or &quot;What is the hazmat safety policy?&quot;"></textarea>
+        <button type="submit" id="send-button">Send</button>
+      </form>
+    </section>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title">Quick prompts</div>
+        <div class="sidebar-body">
+          <div class="pill" data-prompt="Track shipment CFS-1001">
+            <span>🚚 Track shipment CFS-1001</span>
+          </div>
+          <div class="pill" data-prompt="What is the hazmat safety policy?">
+            <span>⚠️ Hazmat safety policy</span>
+          </div>
+          <div class="pill" data-prompt="Contact HR">
+            <span>📇 Contact HR</span>
+          </div>
+          <div class="pill" data-prompt="Show me an internal audit checklist">
+            <span>📋 Compliance checklist</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title">What this demonstrates</div>
+        <div class="sidebar-body">
+          • Secure login and role-based access  
+          • Natural-language queries  
+          • Role-aware answers (Dispatcher vs Driver vs Admin)  
+          • Audit logging via the backend `/api/chat` endpoint  
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title">Demo tips</div>
+        <div class="sidebar-body">
+          1. Log in as different roles (dispatcher, compliance, admin).<br/>
+          2. Ask the same question and show how answers change.<br/>
+          3. Open <code>/admin/logs</code> as admin to show recent chat logs.
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="footer-bar">
+    <div style="display:flex;align-items:center;">
+      <div class="status-dot"></div>
+      <span>Prototype – all data stays on localhost for this demo.</span>
+    </div>
+    <div>
+      Backend: FastAPI • Frontend: Jinja2 HTML
+    </div>
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById("chat-form");
+  const input = document.getElementById("message-input");
+  const chatLog = document.getElementById("chat-log");
+  const sendButton = document.getElementById("send-button");
+
+  function appendMessage(text, sender, meta) {
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("message");
+    wrapper.classList.add(sender === "user" ? "user" : "bot");
+
+    if (meta) {
+      const metaEl = document.createElement("div");
+      metaEl.classList.add("message-meta");
+      metaEl.textContent = meta;
+      wrapper.appendChild(metaEl);
+    }
+
+    const body = document.createElement("div");
+    body.textContent = text;
+    wrapper.appendChild(body);
+
+    chatLog.appendChild(wrapper);
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }
+
+  async function sendMessage(evt) {
+    evt.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+
+    appendMessage(text, "user", "You");
+    input.value = "";
+    input.focus();
+    sendButton.disabled = true;
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: text })
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        const msg = errorData.detail || "Error contacting chatbot API.";
+        appendMessage(msg, "bot", "CascadeBot • error");
+      } else {
+        const data = await res.json();
+        const meta = `CascadeBot • ${data.topic} • role: ${data.role}`;
+        appendMessage(data.reply, "bot", meta);
+      }
+    } catch (err) {
+      appendMessage("Network error talking to the backend API.", "bot", "CascadeBot • error");
+    } finally {
+      sendButton.disabled = false;
+    }
+  }
+
+  form.addEventListener("submit", sendMessage);
+
+  // Quick prompt pills
+  document.querySelectorAll(".pill").forEach((pill) => {
+    pill.addEventListener("click", () => {
+      const prompt = pill.getAttribute("data-prompt");
+      input.value = prompt;
+      input.focus();
+    });
+  });
+</script>
 </body>
 </html>
